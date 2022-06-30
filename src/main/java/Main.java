@@ -1,8 +1,10 @@
+import check.CreateDB;
 import check.DataInspection;
 
 public class Main {
     private Properties properties;
     DataInspection dataInspection = new DataInspection();
+    CreateDB createDB = new CreateDB();
     public static void main(String[] arguments){
         new Main().start();
     }
@@ -12,8 +14,8 @@ public class Main {
         properties = Properties.getInstance();
 
         PostgresConnection.initialize();
-
-        dataInspection.inspectionStart(PostgresConnection.getPostgres());
+        createDB.makeDb(PostgresConnection.getPostgres());
+//        dataInspection.inspectionStart(PostgresConnection.getPostgres());
     }
 
 

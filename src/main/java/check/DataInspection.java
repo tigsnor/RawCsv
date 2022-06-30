@@ -21,6 +21,7 @@ public class DataInspection {
 
     public void inspectionStart(Connection connection){
         try {
+
             Statement stmt = connection.createStatement();
             ResultSet resultSet = stmt.executeQuery("SELECT * FROM test.test");
 

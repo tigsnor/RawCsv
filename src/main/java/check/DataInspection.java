@@ -3,6 +3,7 @@ package check;
 import com.vdurmont.emoji.EmojiParser;
 
 import javax.swing.text.StyledEditorKit;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,16 +24,22 @@ public class DataInspection {
         try {
 
             Statement stmt = connection.createStatement();
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM test.test");
+            //SELECT 문을 사용할때 WHERE NOT 조건을 사용하여 WRITE_ACCOUNT(작성자계정)과 CONTACT(연락처) 둘다 없는 로우를 가져오지 않는다.
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM test.test WHERE NOT (writer_account is null AND contact is null)");
 
             while (resultSet.next()){
                 if(checkUrl(resultSet.getString("url"))){
-//                    System.out.println("true");
+                    String title = changeData(textLimit(emoji(resultSet.getString("title"))));
+//                    String content = changeData(emoji(resultSet.getString("content")));
+                    String date=changeDate(resultSet.getString("write_date"));
+                    String time=changeTime(resultSet.getString("write_time"));
+                    try{
+
+                    }catch (NullPointerException e){
+
+                    }
                 }else{
-//                    System.out.println("false");
                 }
-                String removeEmoji = emoji(resultSet.getString("content"));
-                changeDate(resultSet.getString("write_date"),resultSet.getString("write_time"));
             }
         }catch (SQLException e){
             System.out.println(e);
@@ -40,6 +47,7 @@ public class DataInspection {
 
     }
 
+    //url 정규식을 확인
     public Boolean checkUrl(String url){
         Pattern p = Pattern.compile("^(?:https?:\\/\\/)?(?:www\\.)?[a-zA-Z0-9./]+$");
         Matcher m = p.matcher(url);
@@ -59,14 +67,12 @@ public class DataInspection {
         }
         return true;
     }
-
+// data 내부에있는 이모티콘을 제거
     public String emoji(String data){
         String removeEmoji = EmojiParser.removeAllEmojis(data);
-//        String removeEmoji = EmojiParser.replaceAllEmojis(data,"||||");
-
-//        System.out.println(removeEmoji);
         return removeEmoji;
     }
+    //글길이를 60자로 제한
     public String textLimit(String text){
         if(text.length() > 60){
            String limitText = text.substring(0,56);
@@ -74,42 +80,59 @@ public class DataInspection {
         }
         return text;
     }
-
-    public void changeDate(String Date, String Time){
-//        System.out.println("date:"+Date);
-//        System.out.println("time:"+Time);
-        DateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
-        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+//db writeTime의 시간형태를 변형
+    public String changeTime(String time){
         DateFormat timeParse = new SimpleDateFormat("HHmm");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String timeC=null;
         try {
-            switch (Time.length()) {
+            switch (time.length()) {
                 case 1:
-                    Time = "000" + Time;
+                    time = "000" + time;
                     break;
                 case 2:
-                    Time = "00" + Time;
+                    time = "00" + time;
                     break;
                 case 3:
-                    Time = "00" + Time;
+                    time = "00" + time;
                     break;
             }
         }catch (NullPointerException e){
-            Time = "0000";
+            System.out.println("널");
+            return null;
         }
         try {
-            Date timePar = timeParse.parse(Time);
-            String time = timeFormat.format(timePar);
-           Date datePar = dateParse.parse(Date);
-           String date = dateFormat.format(datePar);
-            System.out.println(date);
-            System.out.println(time);
-
+            Date timePar = timeParse.parse(time);
+            timeC = timeFormat.format(timePar);
+            System.out.println(timeC);
         }
         catch (ParseException e){
             System.out.println(e);
+        }finally {
+            return timeC;
         }
 
-//        System.out.println(timeFormat.format(Time));
+    }
+    //db WriteDate 형태 변환
+    public String changeDate(String date){
+        DateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        String dateC = null;
+
+        try {
+           Date datePar = dateParse.parse(date);
+           dateC = dateFormat.format(datePar);
+//            System.out.println(dateC);
+        }
+        catch (ParseException e){
+            System.out.println(e);
+        }finally {
+            return dateC;
+        }
+    }
+
+    public String changeData(String data){
+       String replaceData = data.replace("\t"," ").replace("\r\n"," ").replace(",","^");
+       return replaceData;
     }
 }

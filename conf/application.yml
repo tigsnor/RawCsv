@@ -1,7 +1,7 @@
 postgres:
-  host: "192.168.0.158"
+  host: "localhost"
   port: 5432
-  db: "smart"
-  id: "postgres"
-  pw: "4466"
+  db: "smartchian"
+  id: "test01"
+  pw: "test01"
 

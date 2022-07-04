@@ -1,9 +1,16 @@
 package check;
 
+import com.opencsv.CSVWriter;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CreateDB {
     Connection connection;
@@ -45,6 +52,24 @@ public class CreateDB {
         }
 
     }
+    //여기에 csv작성파일
+    public void makeCsv(String name, String[] data) throws IOException {
+        DateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
+        Date nwDate = new Date();
+        String tbDate = dateParse.format(nwDate);
+        String path = "C:\\Users\\e2on\\Desktop\\csvTest\\"+name+"_"+tbDate+"_C";
+        CSVWriter writer = new CSVWriter(new FileWriter(path));
+
+        String[] category = {"seq", "url", "channel", "title", "write_date", "write_time", "write_name", "write_account", "contact"};
+        writer.writeNext(category);
+        for(int i=0; i<data.length; i++){
+            writer.writeNext(data);
+        }
+
+        writer.close();
+
+    }
+
     public void makeDb(String name){
         try {
             String sql = "CREATE TABLE if not exists"+name +"(SEQ numeric primary key ,URL varchar(254) not null, CHANNEL varchar(254) not null, TITLE varchar(4096) not null, CONTENT varchar(65536) not null, WRITE_DATE varchar(254) not null, WRITE_TIME varchar(254) null, WRITER_NAME varchar(254) null, WRITER_ACCOUNT varchar(254) null, CONTACT varchar(65536) null);";

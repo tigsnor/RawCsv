@@ -128,7 +128,7 @@ public class DataInspection {
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.NO_ESCAPE_CHARACTER);
 
-        String[] category = {"seq", "url", "channel", "title", "content", "write_date", "write_time", "writer_name", "write_account", "contact"};
+        String[] category = {"seq", "url", "channel", "title", "content", "write_date", "write_time", "writer_name", "writer_account", "contact"};
         writer.writeNext(category);
         for(int i=0; i<data.size(); i++){
             writer.writeNext(data.get(i));

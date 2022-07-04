@@ -35,25 +35,25 @@ public class DataInspection {
             ResultSet drugResultSet = stmt.executeQuery("SELECT * FROM 마약_20220101_20220331 WHERE NOT (writer_account is null AND contact is null)");
             putData("ETO_19", drugResultSet);
 
-            ResultSet resultSet0 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '대리입금' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet0 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%대리입금%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_20", resultSet0);
 
-            ResultSet resultSet1 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '미등록대부' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet1 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%미등록대부%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_21", resultSet1);
             
-            ResultSet resultSet2 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '신용정보 매매' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet2 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용정보 매매%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_22", resultSet2);
             
-            ResultSet resultSet3 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '신용카드 현금화' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet3 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용카드 현금화%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_23", resultSet3);
             
-            ResultSet resultSet4 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '작업대출' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet4 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%작업대출%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_24", resultSet4);
             
-            ResultSet resultSet5 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '통장매매' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet5 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%통장매매%' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_25", resultSet5);
 
-            ResultSet resultSet6 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE NOT KEYWORD_GROUPS LIKE '휴대폰 소액결제' AND (writer_account is null AND contact is null)");
+            ResultSet resultSet6 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '휴대폰 소액결제' AND NOT (writer_account is null AND contact is null)");
             putData("ETO_26", resultSet6);
 
 

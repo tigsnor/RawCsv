@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Date;
 
-import static com.opencsv.ICSVWriter.NO_QUOTE_CHARACTER;
+import static com.opencsv.ICSVWriter.*;
 
 public class DataInspection {
 
@@ -31,29 +31,29 @@ public class DataInspection {
 
         try {
             Statement stmt = connection.createStatement();
-            //SELECT 문을 사용할때 WHERE NOT 조건을 사용하여 WRITE_ACCOUNT(작성자계정)과 CONTACT(연락처) 둘다 없는 로우를 가져오지 않는다.
-            ResultSet drugResultSet = stmt.executeQuery("SELECT * FROM 마약_20220101_20220331 WHERE NOT (writer_account is null AND contact is null)");
+            //SELECT 문을 사용할때 WHERE NOT 조건을 사용하여 WRITE_ACCOUNT(작성자계정)과 CONTACT(연락처) 둘다 없고 TITLE(제목)과 CONTENT(내용) 둘다없는 로우를 가져오지 않는다.
+            ResultSet drugResultSet = stmt.executeQuery("SELECT * FROM 마약_20220101_20220331 WHERE NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_19", drugResultSet);
 
-            ResultSet resultSet0 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%대리입금%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet0 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%대리입금%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_20", resultSet0);
 
-            ResultSet resultSet1 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%미등록대부%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet1 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%미등록대부%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_21", resultSet1);
             
-            ResultSet resultSet2 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용정보 매매%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet2 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용정보 매매%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_22", resultSet2);
             
-            ResultSet resultSet3 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용카드 현금화%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet3 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용카드 현금화%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_23", resultSet3);
             
-            ResultSet resultSet4 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%작업대출%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet4 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%작업대출%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_24", resultSet4);
             
-            ResultSet resultSet5 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%통장매매%' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet5 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%통장매매%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_25", resultSet5);
 
-            ResultSet resultSet6 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '휴대폰 소액결제' AND NOT (writer_account is null AND contact is null)");
+            ResultSet resultSet6 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%휴대폰 소액결제%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
             putData("ETO_26", resultSet6);
 
 
@@ -65,7 +65,7 @@ public class DataInspection {
 
     public void putData(String dataName, ResultSet resultSet){
         try{
-            //카테고리
+
             List<String[]> testList = new ArrayList<>();
             String[] data = {};
             String csvname = dataName;
@@ -73,16 +73,23 @@ public class DataInspection {
 
             while (resultSet.next()){
                 if(checkUrl(resultSet.getString("url"))){
+                    //contact null처리
                     String contact2 = "";
                     if (resultSet.getString("contact") != null) {
-                        contact2 = changeData(resultSet.getString("contact"));
+                        contact2 = changeData(contactLimit(resultSet.getString("contact")));
                     }
-                    int seqNum = resultSet.getRow();
-                    String url= resultSet.getString("url");
-                    String title = changeData(textLimit(emoji(resultSet.getString("title"))));
+
+                    //title이 null이면 content가 title 대체
                     String content = changeData(emoji(resultSet.getString("content")));
-                    String date=changeDate(resultSet.getString("write_date"));
-                    String time=changeTime(resultSet.getString("write_time"));
+                    String title = changeData(textLimit(emoji(resultSet.getString("title"))));
+                    if(title.isEmpty()){
+                        title = textLimit(content);
+                    }
+
+                    int seqNum = resultSet.getRow();
+                    String url= urlLimit(resultSet.getString("url"));
+                    String date = changeDate(resultSet.getString("write_date"));
+                    String time = changeTime(resultSet.getString("write_time"));
                     String channel = changeData(resultSet.getString("channel"));
                     String name = changeData(resultSet.getString("writer_name"));
                     String account = changeData(resultSet.getString("writer_account"));
@@ -117,7 +124,9 @@ public class DataInspection {
         Date nwDate = new Date();
         String tbDate = dateParse.format(nwDate);
         String path = "C:\\Users\\e2on\\Desktop\\csvTest\\"+name+"_"+tbDate+"_C_001";
-        CSVWriter writer = new CSVWriter(new FileWriter(path+".csv"), ',', CSVWriter.NO_QUOTE_CHARACTER);
+        CSVWriter writer = new CSVWriter(new FileWriter(path+".csv"),',',
+                CSVWriter.NO_QUOTE_CHARACTER,
+                CSVWriter.NO_ESCAPE_CHARACTER);
 
 //        String[] category = {"seq", "url", "channel", "title", "write_date", "write_time", "writer_name", "write_account", "contact"};
 //        writer.writeNext(category);
@@ -158,12 +167,31 @@ public class DataInspection {
 
     //글길이를 60자로 제한
     public String textLimit(String text){
-        if(text.length() > 60){
+        if(text.length() >= 60){
            String limitText = text.substring(0,60);
            return limitText+"...";
         }
         return text;
     }
+
+    //contact길이를 5000자로 제한
+    public String contactLimit(String text){
+        if(text.length() >= 5000){
+            String limitText = text.substring(0,4999);
+            return limitText;
+        }
+        return text;
+    }
+
+    //url길이를 254자로 제한
+    public String urlLimit(String text){
+        if(text.length() >= 254){
+            String limitText = text.substring(0,254);
+            return limitText;
+        }
+        return text;
+    }
+
     //db writeTime의 시간형태를 변형
     public String changeTime(String time){
         DateFormat timeParse = new SimpleDateFormat("HHmm");

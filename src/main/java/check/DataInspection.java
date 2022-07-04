@@ -33,28 +33,28 @@ public class DataInspection {
             Statement stmt = connection.createStatement();
             //SELECT 문을 사용할때 WHERE NOT 조건을 사용하여 WRITE_ACCOUNT(작성자계정)과 CONTACT(연락처) 둘다 없고 TITLE(제목)과 CONTENT(내용) 둘다없는 로우를 가져오지 않는다.
             ResultSet drugResultSet = stmt.executeQuery("SELECT * FROM 마약_20220101_20220331 WHERE NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("19_마약판매", drugResultSet);
+            putData("eto_19_마약판매", drugResultSet);
 
             ResultSet resultSet0 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%대리입금%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("20_대리입금", resultSet0);
+            putData("eto_20_대리입금", resultSet0);
 
             ResultSet resultSet1 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%미등록대부%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("21_미등록대부", resultSet1);
+            putData("eto_21_미등록대부", resultSet1);
             
             ResultSet resultSet2 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용정보 매매%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("22_신용정보매매", resultSet2);
+            putData("eto_22_신용정보매매", resultSet2);
             
             ResultSet resultSet3 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%신용카드 현금화%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("23_신용카드현금화", resultSet3);
+            putData("eto_23_신용카드현금화", resultSet3);
             
             ResultSet resultSet4 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%작업대출%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("24_작업대출", resultSet4);
+            putData("eto_24_작업대출", resultSet4);
             
             ResultSet resultSet5 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%통장매매%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("25_통장매매", resultSet5);
+            putData("eto_25_통장매매", resultSet5);
 
             ResultSet resultSet6 = stmt.executeQuery("SELECT * FROM 금융_20220101_20220331 WHERE KEYWORD_GROUPS LIKE '%휴대폰 소액결제%' AND NOT (writer_account is null AND contact is null) AND NOT (TITLE is null AND CONTENT is null)");
-            putData("26_휴대폰소액결제", resultSet6);
+            putData("eto_26_휴대폰소액결제", resultSet6);
 
 
         }

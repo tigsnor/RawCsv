@@ -155,10 +155,11 @@ public class DataInspection {
 //        System.out.println(removeEmoji);
         return removeEmoji;
     }
+
     //글길이를 60자로 제한
     public String textLimit(String text){
-        if(text.length() > 56){
-           String limitText = text.substring(0,56);
+        if(text.length() > 60){
+           String limitText = text.substring(0,60);
            return limitText+"...";
         }
         return text;
@@ -214,8 +215,8 @@ public class DataInspection {
         }
     }
 
+    //탭->공백, 줄바꿈->공백, ','->^ 치환
     public String changeData(String data){
-
         try {
             String replaceData = data.replace("\t", " ").replace("\r\n", " ").replace(",", "^");
             return replaceData;

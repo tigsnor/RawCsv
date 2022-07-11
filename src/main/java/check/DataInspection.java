@@ -4,6 +4,7 @@ import com.opencsv.CSVWriter;
 import com.opencsv.ICSVWriter;
 import com.vdurmont.emoji.EmojiParser;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -121,13 +122,30 @@ public class DataInspection {
 
     }
 
+    public void checkFolder(){
+        String path = "C:\\Users\\e2on\\Desktop\\육안검사필요\\2분기\\";
+        File file = new File(path);
+
+        if (!file.exists()){
+            if (file.mkdir()){
+                System.out.println("폴더 생성 성공");
+            }
+            else {
+                System.out.println("폴더 생성 실패");
+            }
+        } else {
+            System.out.println("폴더가 이미 존재합니다.");
+        }
+    }
+
     //여기에 csv작성파일
     public void makeCsv(String name, List<String[]> data) throws IOException {
         DateFormat dateParse = new SimpleDateFormat("yyyyMMdd");
         Date nwDate = new Date();
         String tbDate = dateParse.format(nwDate);
-        String path = "C:\\Users\\e2on\\Desktop\\육안검사필요\\2분기\\"+name;
-        CSVWriter writer = new CSVWriter(new FileWriter(path+".csv"),',',
+        String csvPath = "C:\\Users\\e2on\\Desktop\\육안검사필요\\2분기\\"+name;
+
+        CSVWriter writer = new CSVWriter(new FileWriter(csvPath+".csv"),',',
                 CSVWriter.NO_QUOTE_CHARACTER,
                 CSVWriter.NO_ESCAPE_CHARACTER);
 

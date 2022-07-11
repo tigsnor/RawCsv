@@ -15,6 +15,7 @@ public class Main {
 
         PostgresConnection.initialize();
 //        createDB.makeDb(PostgresConnection.getPostgres());
+        dataInspection.checkFolder();
         dataInspection.inspectionStart(PostgresConnection.getPostgres());
     }
 
